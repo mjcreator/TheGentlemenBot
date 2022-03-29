@@ -1,0 +1,8 @@
+config.py
+
+vscode/
+
+.env
+venv/
+.log
+.pyc
