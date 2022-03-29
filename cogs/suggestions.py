@@ -37,23 +37,23 @@ class Suggestion(commands.Cog):
             color=9021952,
             timestamp=inter.created_at,
         )
-
+        author = inter.author
         embed.set_author(
-            name=inter.author.nick,
-            icon_url=inter.author.display_avatar.url
+            name=author.display_name,
+            icon_url=author.display_avatar.url
         )
 
-        message = f"Suggestion submitted:"
+        params = ""
         if(role is not None):
             embed.add_field(name="Add Role:", value=role)
-            message += f" New role `{role}`"
+            params += f" New role `{role}`"
         if(user is not None):
             embed.add_field(name="To:", value=user.mention)
-            message += f" for {user.mention}. "
+            params += f" for {user.mention}. "
 
-        message += f"\n{description}"
-        
-        self.logger.info(message)
+        self.logger.info(f"Suggestion submitted by {author.name}#{author.discriminator} with description \"{description}\"; Params:{params}")
+
+        message = f"Suggestion submitted:{params}\n{description}"
 
         guildID = inter.guild_id
         if(guildID in self.suggestChannel):
@@ -66,17 +66,6 @@ class Suggestion(commands.Cog):
             await msg.add_reaction(self.downvoteEmoji)
 
         await inter.send(message, delete_after=5)
-    
-    # @suggest.command(name='role')
-    # async def suggest_role(self, ctx, roleName:str, description:str):
-    #     self.logger.debug(f"Role suggestion submitted: role={roleName}; \"{description}\"")
-    #     await ctx.send("role suggestion submitted", delete_after=5)
-    
-    # @suggest.command(name='user-role')
-    # async def suggest_user_role(self, ctx, roleName:str, member: disnake.Member, description:str):
-    #     self.logger.debug(f"User role suggestion submitted: for={member.nick}, role={roleName}, \"{description}\"")
-    #     await ctx.send("role suggestion submitted", delete_after=5)
-
 
 def setup(bot):
     bot.add_cog(Suggestion(bot))
