@@ -1,8 +1,9 @@
 config.py
 
 vscode/
-
+__pycache__/
 .env
 venv/
+bot-env/
 *.log
 *.pyc
