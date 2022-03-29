@@ -4,5 +4,5 @@ vscode/
 
 .env
 venv/
-.log
-.pyc
+*.log
+*.pyc
