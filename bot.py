@@ -29,7 +29,7 @@ class GentlemenBot(commands.Bot):
         )
 
         self.client_id  = config.client_id
-        self.log = logging.getLogger("GentlemenBot")
+        self.log = logging.getLogger(type(self).__name__)
 
         self.add_cog(BotManager(self, self.log))
 
@@ -41,6 +41,9 @@ class GentlemenBot(commands.Bot):
             except Exception:
                 self.log.exception(f"Error loading {ext}:")
                 traceback.print_exc()
+
+    async def on_ready(self):
+        self.log.info("Bot Running")
 
     def run(self):
         try:

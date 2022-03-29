@@ -10,7 +10,7 @@ import logging
 class Suggestion(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.logger = logging.getLogger("Suggestion")
+        self.logger = logging.getLogger(type(self).__name__)
         self.suggestChannel = {916230367004987422 : 916387144182923285}
 
 
