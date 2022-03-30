@@ -27,6 +27,11 @@ class AprilFools(commands.Cog):
             "https://tenor.com/view/rick-roll-gif-19920902",
             "https://tenor.com/view/challenge-find-out-when-this-gif-ends-rickroll-rickrolled-hidden-rickroll-gif-22493495",
             "https://tenor.com/view/suffer-rickroll-llamatroll-syntheticllama-gif-21044288",
+            "https://tenor.com/view/funny-unfunny-please-become-funny-8ball-magic8ball-gif-23567174",
+            "https://tenor.com/view/sapo-meme-boca-pepe-gif-14416557",
+            "https://tenor.com/view/youre-fucked-the-simpsons-magic-eight-gif-15834392",
+            "https://tenor.com/view/rock-one-eyebrow-raised-rock-staring-the-rock-gif-22113367",
+            "https://tenor.com/view/dance-spore-gif-20319309",
         ]
 
     @commands.Cog.listener()
