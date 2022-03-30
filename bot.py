@@ -78,7 +78,28 @@ class BotManager(commands.Cog):
                 await inter.edit_original_message(content=f"Failed to reloaded {ext} with exception ```\n{error}```")
         else:
             await inter.send(content=f"{ext} was not found.", ephemeral=True)
+    
+    @commands.slash_command(default_permission=False)
+    @commands.is_owner()
+    @commands.guild_permissions(guild_id=916230367004987422,users={528674907618410516:True})
+    async def unloadExt(self, inter : disnake.ApplicationCommandInteraction, ext : str):
+        '''
+        reloads a bot extention.
+        '''
+        if(ext in config.cogs):
+            try:
+                await inter.response.defer(ephemeral=True)
+                self.log.info(f"unloading extension {ext}")
+                self.bot.unload_extension(ext)
+                await inter.edit_original_message(content=f"Successfully unloaded {ext}!")
+            except Exception:
+                self.log.exception(f"Error unloading {ext}:") 
+                error = traceback.format_exc()
+                await inter.edit_original_message(content=f"Failed to unloading {ext} with exception ```\n{error}```")
+        else:
+            await inter.send(content=f"{ext} was not found.", ephemeral=True)
 
     @reloadExt.autocomplete('ext')
+    @unloadExt.autocomplete('ext')
     async def autoCompleteCogs(self, inter : disnake.CommandInteraction, user_input: str):
         return [cog for cog in self.bot.loadedExtentions if cog.startswith(user_input)]
