@@ -1,4 +1,3 @@
-from email import message
 import logging
 import traceback
 from disnake.ext import commands
@@ -47,6 +46,8 @@ class GentlemenBot(commands.Bot):
 
     async def on_ready(self):
         self.log.info("Bot Running")
+        activity = disnake.Game(name="Doing a little tolling")
+        await self.change_presence(activity=activity)
 
     def run(self):
         try:
