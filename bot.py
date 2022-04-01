@@ -33,10 +33,13 @@ class GentlemenBot(commands.Bot):
 
         self.add_cog(BotManager(self, self.log))
 
+        self.loadedExtentions = []
+
         for ext in config.cogs:
             try:
                 self.log.info(f"loading extension {ext}")
                 self.load_extension(ext)
+                self.loadedExtentions.append(ext)
 
             except Exception:
                 self.log.exception(f"Error loading {ext}:")
@@ -56,8 +59,6 @@ class BotManager(commands.Cog):
         self.bot = bot
         self.log = logger
 
-    
-
     @commands.slash_command(default_permission=False)
     @commands.is_owner()
     @commands.guild_permissions(guild_id=916230367004987422,users={528674907618410516:True})
@@ -65,7 +66,7 @@ class BotManager(commands.Cog):
         '''
         reloads a bot extention.
         '''
-        if(ext in config.cogs):
+        if(ext in self.bot.loadedExtentions):
             try:
                 await inter.response.defer(ephemeral=True)
                 self.log.info(f"reloading extension {ext}")
@@ -80,8 +81,4 @@ class BotManager(commands.Cog):
 
     @reloadExt.autocomplete('ext')
     async def autoCompleteCogs(self, inter : disnake.CommandInteraction, user_input: str):
-        return [cog for cog in config.cogs if cog.startswith(user_input)]
-
-    @commands.slash_command()
-    async def test(self, inter : disnake.CommandInteraction):
-        await inter.send("Works!")
+        return [cog for cog in self.bot.loadedExtentions if cog.startswith(user_input)]
