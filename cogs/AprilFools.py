@@ -32,6 +32,8 @@ class AprilFools(commands.Cog):
             "https://tenor.com/view/youre-fucked-the-simpsons-magic-eight-gif-15834392",
             "https://tenor.com/view/rock-one-eyebrow-raised-rock-staring-the-rock-gif-22113367",
             "https://tenor.com/view/dance-spore-gif-20319309",
+            "https://tenor.com/view/klm-aviation-aircraft-airplane-royal-dutch-airlines-gif-23425518",
+            "https://tenor.com/view/i-see-no-problem-here-crazy-eyes-gif-12788383",
         ]
 
     @commands.Cog.listener()
