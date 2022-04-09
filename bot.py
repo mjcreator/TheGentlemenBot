@@ -46,8 +46,9 @@ class GentlemenBot(commands.Bot):
 
     async def on_ready(self):
         self.log.info("Bot Running")
-        activity = disnake.Game(name="Doing a little tolling")
-        await self.change_presence(activity=activity)
+        if (config.botActivity):
+            activity = disnake.Game(name=config.botActivity)
+            await self.change_presence(activity=activity)
 
     def run(self):
         try:
@@ -87,11 +88,12 @@ class BotManager(commands.Cog):
         '''
         reloads a bot extention.
         '''
-        if(ext in config.cogs):
+        if(ext in self.bot.loadedExtentions):
             try:
                 await inter.response.defer(ephemeral=True)
                 self.log.info(f"unloading extension {ext}")
                 self.bot.unload_extension(ext)
+                self.bot.loadedExtentions.remove(ext)
                 await inter.edit_original_message(content=f"Successfully unloaded {ext}!")
             except Exception:
                 self.log.exception(f"Error unloading {ext}:") 
@@ -99,6 +101,19 @@ class BotManager(commands.Cog):
                 await inter.edit_original_message(content=f"Failed to unloading {ext} with exception ```\n{error}```")
         else:
             await inter.send(content=f"{ext} was not found.", ephemeral=True)
+    
+    @commands.slash_command(default_permission=False)
+    @commands.is_owner()
+    @commands.guild_permissions(guild_id=916230367004987422,users={528674907618410516:True})
+    async def setActivity(self, inter : disnake.ApplicationCommandInteraction, act : str = None):
+        '''
+        Sets the text of the bot activity.
+        '''
+        activity = None
+        if(act):
+            activity = disnake.Game(name=act)
+        await self.bot.change_presence(activity=activity)
+        await inter.send(content=f"Set activity to \"{act}\".", ephemeral=True)
 
     @reloadExt.autocomplete('ext')
     @unloadExt.autocomplete('ext')
