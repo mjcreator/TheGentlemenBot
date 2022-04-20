@@ -63,6 +63,7 @@ def setupLogging():
 
         Filehandler = RotatingFileHandler(filename=config.logFile, encoding='utf-8', mode='w', maxBytes=config.logSize, backupCount=config.logBackupCount)
         Filehandler.setFormatter(fmt)
+        Filehandler.setLevel(logging.INFO)
         log.addHandler(Filehandler)
 
         consoleHandler = logging.StreamHandler(stream=stderr)

@@ -2,7 +2,8 @@ import logging
 import traceback
 from disnake.ext import commands
 import disnake
-
+from os.path import dirname, isfile, relpath, join
+import glob
 import config
 
 class GentlemenBot(commands.Bot):
@@ -46,7 +47,7 @@ class GentlemenBot(commands.Bot):
 
     async def on_ready(self):
         self.log.info("Bot Running")
-        if (config.botActivity):
+        if ("botActivity" in config.__dict__ and config.botActivity):
             activity = disnake.Game(name=config.botActivity)
             await self.change_presence(activity=activity)
 
@@ -81,6 +82,27 @@ class BotManager(commands.Cog):
         else:
             await inter.send(content=f"{ext} was not found.", ephemeral=True)
     
+    @commands.slash_command(default_permission=False)
+    @commands.is_owner()
+    @commands.guild_permissions(guild_id=916230367004987422,users={528674907618410516:True})
+    async def loadExt(self, inter : disnake.ApplicationCommandInteraction, ext : str):
+        '''
+        loads a bot extention.
+        '''
+        if(ext in self.getModules()):
+            try:
+                await inter.response.defer(ephemeral=True)
+                self.log.info(f"load extension {ext}")
+                self.bot.load_extension(ext)
+                self.bot.loadedExtentions.append(ext)
+                await inter.edit_original_message(content=f"Successfully loaded {ext}!")
+            except Exception:
+                self.log.exception(f"Error loading {ext}:") 
+                error = traceback.format_exc()
+                await inter.edit_original_message(content=f"Failed to loaded {ext} with exception ```\n{error}```")
+        else:
+            await inter.send(content=f"{ext} was not found.", ephemeral=True)
+
     @commands.slash_command(default_permission=False)
     @commands.is_owner()
     @commands.guild_permissions(guild_id=916230367004987422,users={528674907618410516:True})
@@ -119,3 +141,22 @@ class BotManager(commands.Cog):
     @unloadExt.autocomplete('ext')
     async def autoCompleteCogs(self, inter : disnake.CommandInteraction, user_input: str):
         return [cog for cog in self.bot.loadedExtentions if cog.startswith(user_input)]
+
+    def getModules(self):
+        modules = []
+        directory = join(dirname(__file__), "cogs")
+        for module in glob.glob(join(directory , "*.py")):
+            if not isfile(module):
+                continue
+            name = ""
+            try:
+                name = relpath(module,directory)[:-3]
+            except ValueError:
+                continue
+            if(name):
+                modules.append(f"cogs.{name}")
+        return modules
+
+    @loadExt.autocomplete('ext')
+    async def autoCompleteUnloadedCogs(self, inter : disnake.CommandInteraction, user_input: str):
+        return [cog for cog in self.getModules() if user_input in cog]
