@@ -16,6 +16,7 @@ class GentlemenBot(commands.Bot):
             emojis = True,
             voice_states = True,
             messages = True,
+            message_content=True,
             reactions = True
         )
 
@@ -25,7 +26,6 @@ class GentlemenBot(commands.Bot):
             intents=intents,
             enable_debug_events=True,
             test_guilds=config.testServers,
-            sync_permissions=True
         )
 
         self.client_id  = config.client_id
@@ -62,10 +62,10 @@ class BotManager(commands.Cog):
         self.bot = bot
         self.log = logger
 
-    @commands.slash_command(default_permission=False)
+    @commands.slash_command(dm_permission=True,guild_ids=[895401921622466601])
     @commands.is_owner()
-    @commands.guild_permissions(guild_id=916230367004987422,users={528674907618410516:True})
-    async def reloadExt(self, inter : disnake.ApplicationCommandInteraction, ext : str):
+    @commands.default_member_permissions(manage_guild=True, administrator=True)
+    async def reloadext(self, inter : disnake.ApplicationCommandInteraction, ext : str):
         '''
         reloads a bot extention.
         '''
@@ -82,10 +82,10 @@ class BotManager(commands.Cog):
         else:
             await inter.send(content=f"{ext} was not found.", ephemeral=True)
     
-    @commands.slash_command(default_permission=False)
+    @commands.slash_command(dm_permission=True,guild_ids=[895401921622466601])
     @commands.is_owner()
-    @commands.guild_permissions(guild_id=916230367004987422,users={528674907618410516:True})
-    async def loadExt(self, inter : disnake.ApplicationCommandInteraction, ext : str):
+    @commands.default_member_permissions(manage_guild=True, administrator=True)
+    async def loadext(self, inter : disnake.ApplicationCommandInteraction, ext : str):
         '''
         loads a bot extention.
         '''
@@ -103,10 +103,10 @@ class BotManager(commands.Cog):
         else:
             await inter.send(content=f"{ext} was not found.", ephemeral=True)
 
-    @commands.slash_command(default_permission=False)
+    @commands.slash_command(dm_permission=True, guild_ids=[895401921622466601])
     @commands.is_owner()
-    @commands.guild_permissions(guild_id=916230367004987422,users={528674907618410516:True})
-    async def unloadExt(self, inter : disnake.ApplicationCommandInteraction, ext : str):
+    @commands.default_member_permissions(manage_guild=True, administrator=True)
+    async def unloadext(self, inter : disnake.ApplicationCommandInteraction, ext : str):
         '''
         reloads a bot extention.
         '''
@@ -124,10 +124,10 @@ class BotManager(commands.Cog):
         else:
             await inter.send(content=f"{ext} was not found.", ephemeral=True)
     
-    @commands.slash_command(default_permission=False)
+    @commands.slash_command(dm_permission=True,guild_ids=[895401921622466601])
     @commands.is_owner()
-    @commands.guild_permissions(guild_id=916230367004987422,users={528674907618410516:True})
-    async def setActivity(self, inter : disnake.ApplicationCommandInteraction, act : str = None):
+    @commands.default_member_permissions(manage_guild=True, administrator=True)
+    async def setactivity(self, inter : disnake.ApplicationCommandInteraction, act : str = None):
         '''
         Sets the text of the bot activity.
         '''
@@ -136,11 +136,24 @@ class BotManager(commands.Cog):
             activity = disnake.Game(name=act)
         await self.bot.change_presence(activity=activity)
         await inter.send(content=f"Set activity to \"{act}\".", ephemeral=True)
+    
+    # @commands.slash_command(default_permission=False)
+    # @commands.is_owner()
+    # @commands.guild_permissions(guild_id=916230367004987422,users={528674907618410516:True})
+    # async def triggerAlert(self, inter : disnake.ApplicationCommandInteraction, act : str = None):
+    #     '''
+    #     Sets the text of the bot activity.
+    #     '''
+    #     activity = None
+    #     if(act):
+    #         activity = disnake.Streaming(name="Emergency alert", game=act, Platform="Youtube", url="https://www.youtube.com/watch?v=TqDw9awEWbI")
+    #     await self.bot.change_presence(activity=activity, status=disnake.Status.streaming)
+    #     await inter.send(content=f"Set activity to \"{act}\".", ephemeral=True)
 
-    @reloadExt.autocomplete('ext')
-    @unloadExt.autocomplete('ext')
+    @reloadext.autocomplete('ext')
+    @unloadext.autocomplete('ext')
     async def autoCompleteCogs(self, inter : disnake.CommandInteraction, user_input: str):
-        return [cog for cog in self.bot.loadedExtentions if cog.startswith(user_input)]
+        return [cog for cog in self.bot.loadedExtentions if (cog.startswith(user_input) or user_input=="")]
 
     def getModules(self):
         modules = []
@@ -157,6 +170,14 @@ class BotManager(commands.Cog):
                 modules.append(f"cogs.{name}")
         return modules
 
-    @loadExt.autocomplete('ext')
+    @loadext.autocomplete('ext')
     async def autoCompleteUnloadedCogs(self, inter : disnake.CommandInteraction, user_input: str):
-        return [cog for cog in self.getModules() if user_input in cog]
+        return [cog for cog in self.getModules() if (user_input in cog or user_input == "")]
+
+    async def cog_slash_command_error(self, inter: disnake.ApplicationCommandInteraction, error: Exception):
+        if isinstance(error, commands.NotOwner):
+            return await inter.send("Only the bot owner can run this command",ephemeral=True)
+
+    async def cog_command_error(self, ctx, error):
+        if isinstance(error, commands.NotOwner):
+            ctx.send("Only the bot owner can run this command",ephemeral=True)
