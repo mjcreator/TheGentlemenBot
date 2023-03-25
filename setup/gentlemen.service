@@ -1,0 +1,16 @@
+[Unit]
+Description=The Gentlemen Discord Bot
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=3
+StartLimitIntervalSec=20
+User=disnake
+WorkingDirectory=/opt/Discord/TheGentlemenBot
+ExecStart=/opt/Discord/TheGentlemenBot/bot-env/bin/python3 /opt/Discord/TheGentlemenBot/run.py
+Environment="PATH=/opt/Discord/TheGentlemenBot/bot-env/bin"
+
+[Install]
+WantedBy=multi-user.target

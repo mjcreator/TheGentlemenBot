@@ -1,3 +1,4 @@
+#!/opt/Discord/TheGentlemenBot/bot-env/bin/python3
 from sys import stderr
 import disnake
 import asyncio
