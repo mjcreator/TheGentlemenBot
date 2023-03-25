@@ -8,7 +8,7 @@ import config
 
 class GentlemenBot(commands.Bot):
     def __init__(self):
-        allowedMentions = disnake.AllowedMentions(everyone=False,roles=True,users=True)
+        allowedMentions = disnake.AllowedMentions(everyone=False,roles=True,users=True,replied_user=True)
         intents = disnake.Intents(
             guilds = True,
             members = True,
@@ -22,7 +22,7 @@ class GentlemenBot(commands.Bot):
 
         super().__init__(
             command_prefix='/',
-            allowedMentions=allowedMentions,
+            allowed_mentions=allowedMentions,
             intents=intents,
             enable_debug_events=True,
             test_guilds=config.testServers,

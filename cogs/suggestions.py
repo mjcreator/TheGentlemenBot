@@ -92,7 +92,7 @@ class Suggestion(commands.Cog):
         
         self.logger.debug(f"new reaction from {payload.member.name} with {payload.emoji}")
         message = self.bot.get_message(payload.message_id)
-        print(message.mentions)
+        # print(message.mentions)
         if(message and message.author == self.bot.user):
             self.logger.debug(f"message has reactions {message.reactions}")
             for reaction in message.reactions:
